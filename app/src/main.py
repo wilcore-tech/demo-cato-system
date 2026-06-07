@@ -41,6 +41,9 @@ async def health_check():
     return {"status": "ok", "version": app.version}
 
 
+_ncbi_client = ExternalAPIClient(base_url="https://eutils.ncbi.nlm.nih.gov/entrez/eutils")
+
+
 @app.get("/api/v1/datasets")
 async def list_datasets(token: str = Depends(oauth2_scheme)):
     """Return a list of datasets the authenticated user is authorized to access."""
