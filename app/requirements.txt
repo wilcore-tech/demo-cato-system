@@ -4,8 +4,8 @@ boto3==1.26.137
 pydantic==1.10.9
 fastapi==0.95.2
 uvicorn==0.22.0
-python-jose[cryptography]==3.3.0
-python-multipart==0.0.6
+python-jose[cryptography]==3.4.0
+python-multipart==0.0.27
 alembic==1.11.1
 psycopg2-binary==2.9.6
 httpx==0.24.1
