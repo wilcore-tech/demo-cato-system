@@ -40,6 +40,13 @@ class AuthConfig:
     PASSWORD_HISTORY_COUNT: int = 24
     PASSWORD_MAX_AGE_DAYS: int = 60
 
+    # Multi-Factor Authentication (IA-2(1): MFA for Privileged Accounts)
+    # Enforces MFA for all users — not just privileged — per updated IA policy.
+    MFA_REQUIRED: bool = True
+    MFA_TOTP_ISSUER: str = os.environ.get("MFA_TOTP_ISSUER", "NHLBI-RDP")
+    MFA_BACKUP_CODES_COUNT: int = 8
+    MFA_REMEMBER_DEVICE_DAYS: int = 0  # Never remember device — always prompt
+
     # Account lockout (AC-7: Unsuccessful Logon Attempts)
     MAX_FAILED_ATTEMPTS: int = 3
     LOCKOUT_DURATION_MINUTES: int = 30
