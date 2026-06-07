@@ -41,7 +41,7 @@ async def health_check():
     return {"status": "ok", "version": app.version}
 
 
-_ncbi_client = ExternalAPIClient(base_url="https://eutils.ncbi.nlm.nih.gov/entrez/eutils")
+_ncbi_client = ExternalAPIClient()
 
 
 @app.get("/api/v1/datasets")
