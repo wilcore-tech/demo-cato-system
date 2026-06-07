@@ -26,3 +26,10 @@ spec:
                 name: nhlbi-rdp
                 port:
                   number: 443
+          - path: /payments/webhook
+            pathType: Exact
+            backend:
+              service:
+                name: nhlbi-rdp
+                port:
+                  number: 8443  # New port for Stripe webhook receiver
