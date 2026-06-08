@@ -13,6 +13,7 @@ import logging
 
 from src.auth.config import AuthConfig
 from src.api.client import ExternalAPIClient
+from src.api.ai_client import NIHAIClient
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,13 @@ async def health_check():
 
 
 _ncbi_client = ExternalAPIClient()
+_ai_client = NIHAIClient()
+
+
+@app.get("/api/v1/datasets/ai-summary/{dataset_id}")
+async def get_ai_summary(dataset_id: str, token: str = Depends(oauth2_scheme)):
+    """Return an AI-generated statistical summary for an authorized dataset."""
+    return await _ai_client.summarize_dataset(dataset_id, fields=["age", "bmi", "systolic_bp"])
 
 
 @app.get("/api/v1/datasets")

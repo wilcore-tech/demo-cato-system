@@ -80,11 +80,19 @@ resource "aws_security_group" "app" {
   }
 
   egress {
-    description = "Allow all outbound (HTTPS to upstream APIs)"
+    description = "Allow HTTPS to upstream APIs (NCBI, NIH AI service)"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "NIH AI Analysis Service — api.ai.nih.gov:8443"
+    from_port   = 8443
+    to_port     = 8443
+    protocol    = "tcp"
+    cidr_blocks = ["128.231.0.0/16"]  # NIH IP range
   }
 
   tags = {
