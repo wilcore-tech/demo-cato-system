@@ -15,11 +15,11 @@
 |---|---|---|---|
 | Critical | **0** | 0 | 0 |
 | High | **0** | 0 | 0 |
-| Medium | **2** | 0 | 0 |
+| Medium | **4** | 0 | 0 |
 | Low | [PLACEHOLDER] | [PLACEHOLDER] | 0 |
-| **Total Open** | **2+** | | |
+| **Total Open** | **4+** | | |
 
-The system maintains zero critical and zero high findings. Two medium findings are actively tracked below. The system is in good standing with its Authorization to Operate.
+The system maintains zero critical and zero high findings. Four medium findings are actively tracked below. Two new findings (POA&M-2026-003 and POA&M-2026-004) were identified during SIA review of the Stripe payment integration (Change CHG-2026-PR3). The system is in good standing with its Authorization to Operate.
 
 ---
 
@@ -66,6 +66,44 @@ The system maintains zero critical and zero high findings. Two medium findings a
 | Milestone 1 | Update action versions and pin SHAs in CI workflow — [PLACEHOLDER DATE] |
 | Milestone 2 | Configure Dependabot for Actions updates — [PLACEHOLDER DATE] |
 | Status | **In Progress** |
+| AO Accepted Risk | No — active remediation required |
+
+---
+
+### POA&M-2026-003 — ISA Not Yet Executed: Stripe Payment Integration (ISA-NHLBI-STRIPE-2026-001)
+
+| Field | Value |
+|---|---|
+| Finding ID | POA&M-2026-003 |
+| Severity | Medium |
+| Source | SIA review — Change CHG-2026-PR3 (Stripe integration) |
+| Date Identified | 2026-06-08 |
+| Control(s) Affected | CA-3 (Information Exchange), AC-4 (Information Flow Enforcement) |
+| Vulnerability | The Stripe payment integration introduces a new external interconnection (api.stripe.com) that is not yet governed by an executed ISA. Operating a FISMA Moderate system with an unauthorized external interconnection is a CA-3 noncompliance finding. The ISA draft (ISA-NHLBI-STRIPE-2026-001) is in review. |
+| Affected Component | `app/src/payments/stripe_client.py`; SSP Section 5 (External Integrations) |
+| Remediation Plan | (1) Legal review of Stripe DPA — target 2026-06-20; (2) AO review and signature — target 2026-06-25; (3) Stripe countersignature — target 2026-07-01; (4) Production deployment of PR3 gated on executed ISA |
+| Responsible Party | [PLACEHOLDER — ISSO and General Counsel] |
+| Target Date | 2026-07-01 |
+| Status | **In Progress — ISA draft complete, pending legal review** |
+| AO Accepted Risk | No — production deployment blocked until ISA executed |
+
+---
+
+### POA&M-2026-004 — Stripe Secret Key Rotation Not Yet Automated (IA-5, SC-12)
+
+| Field | Value |
+|---|---|
+| Finding ID | POA&M-2026-004 |
+| Severity | Medium |
+| Source | SIA review — Change CHG-2026-PR3 (Stripe integration) |
+| Date Identified | 2026-06-08 |
+| Control(s) Affected | IA-5 (Authenticator Management), SC-12 (Cryptographic Key Management) |
+| Vulnerability | The Stripe API key and webhook secret stored in AWS Secrets Manager (`secrets.tf`) are configured for manual rotation every 90 days. Manual rotation processes are error-prone and may be missed. IA-5 requires that API credentials used for external integrations have documented and enforced rotation procedures. |
+| Affected Component | `app/terraform/secrets.tf` — `aws_secretsmanager_secret.stripe_api_key`, `aws_secretsmanager_secret.stripe_webhook_secret` |
+| Remediation Plan | (1) Implement a Lambda rotation function or scheduled reminder workflow for Stripe key rotation — target 2026-07-15; (2) Document rotation procedure in CMP — target 2026-06-30; (3) Add CloudWatch alarm for secrets approaching 90-day age |
+| Responsible Party | [PLACEHOLDER — DevOps/Platform team] |
+| Target Date | 2026-07-15 |
+| Status | **Open — remediation planning in progress** |
 | AO Accepted Risk | No — active remediation required |
 
 ---

@@ -90,6 +90,7 @@ The NHLBI-RDP authorization boundary encompasses:
 | NCBI Entrez API | NLM/NCBI | REST over HTTPS | Dataset metadata (read-only) | MOU-NHLBI-NCBI-2024-003 [PLACEHOLDER] | Outbound |
 | AWS CloudTrail/CloudWatch | AWS (FedRAMP Moderate) | Internal AWS API | System and audit logs | N/A (AWS service) | Outbound |
 | NIH Enterprise Email (SMTP) | NIH OCIO | SMTP/TLS | Notification emails (no PII) | MOU-NHLBI-OCIO-EMAIL [PLACEHOLDER] | Outbound |
+| Stripe Payments API | Stripe, Inc. | REST over HTTPS (TLS 1.2+) to api.stripe.com:443 | Subscription management, payment events; no research data transmitted | ISA-NHLBI-STRIPE-2026-001 [PLACEHOLDER — execute prior to production deployment] | Outbound |
 
 ---
 
@@ -124,7 +125,7 @@ The NHLBI-RDP authorization boundary encompasses:
 
 **AC-3 (Access Enforcement):** Role-based access control (RBAC) is implemented at the application layer. Three roles are defined: `researcher` (read-only dataset access), `data_steward` (dataset management), and `admin` (system administration). Access enforcement is implemented in the FastAPI authorization middleware and enforced at the database layer via row-level security.
 
-**AC-6 (Least Privilege):** All AWS IAM roles follow least-privilege principles. The ECS task role (`nhlbi-rdp-app-task`) is limited to S3 read access on the datasets bucket and CloudWatch Logs write access. Administrative access to AWS infrastructure requires separate Just-in-Time (JIT) privileged access managed through [PLACEHOLDER — PAM tool name].
+**AC-6 (Least Privilege):** All AWS IAM roles follow least-privilege principles. The ECS task role (`nhlbi-rdp-app-task`) is limited to S3 read access on the datasets bucket, CloudWatch Logs write access, and read access to the Stripe secrets in AWS Secrets Manager (`nhlbi-rdp-app-task-stripe-secrets` IAM policy). Administrative access to AWS infrastructure requires separate Just-in-Time (JIT) privileged access managed through [PLACEHOLDER — PAM tool name].
 
 **AC-7 (Unsuccessful Logon Attempts):** The system enforces account lockout after 3 consecutive failed authentication attempts. Locked accounts are released after 30 minutes or by ISSO action. Lockout events are logged and generate automated alerts to the ISSO.
 
@@ -184,9 +185,9 @@ The NHLBI-RDP authorization boundary encompasses:
 
 **SC-5 (Denial of Service Protection):** AWS Shield Standard is enabled on the ALB. Rate limiting is configured at the ALB (1,000 requests/minute per IP) and at the application layer (100 requests/minute per authenticated user). [PLACEHOLDER — confirm AWS Shield Advanced subscription if required for Moderate systems under current NIH policy].
 
-**SC-8 (Transmission Confidentiality and Integrity):** All data in transit is encrypted using TLS 1.2 or TLS 1.3. TLS 1.0 and 1.1 are explicitly disabled. The ALB SSL policy is `ELBSecurityPolicy-TLS13-1-2-2021-06`. All external API client calls enforce `verify=True` (TLS certificate validation). Internal service communication within the VPC uses TLS where supported by the service.
+**SC-8 (Transmission Confidentiality and Integrity):** All data in transit is encrypted using TLS 1.2 or TLS 1.3. TLS 1.0 and 1.1 are explicitly disabled. The ALB SSL policy is `ELBSecurityPolicy-TLS13-1-2-2021-06`. All external API client calls enforce `verify=True` (TLS certificate validation). Internal service communication within the VPC uses TLS where supported by the service. The Stripe payment integration uses HTTPS to api.stripe.com; egress is restricted to api.stripe.com:443 via the application security group. Inbound Stripe webhooks are received on the existing port 443 path `/payments/webhook` (port 8443 is not used in production; see network.tf). All webhook payloads are HMAC-SHA256 signature-verified using the Stripe-Signature header before processing. Webhook timestamps are validated within a 300-second tolerance to prevent replay attacks.
 
-**SC-12 (Cryptographic Key Establishment and Management):** Cryptographic keys are managed through AWS KMS. Data encryption keys (DEKs) for S3 and Aurora are managed by KMS customer-managed keys (CMKs) with automatic annual rotation. JWT signing keys are RSA-2048, stored in AWS Secrets Manager, rotated every 365 days.
+**SC-12 (Cryptographic Key Establishment and Management):** Cryptographic keys are managed through AWS KMS. Data encryption keys (DEKs) for S3 and Aurora are managed by KMS customer-managed keys (CMKs) with automatic annual rotation. JWT signing keys are RSA-2048, stored in AWS Secrets Manager, rotated every 365 days. Stripe API credentials (secret key and webhook signing secret) are stored in AWS Secrets Manager under `nhlbi-rdp/{env}/stripe-api-key` and `nhlbi-rdp/{env}/stripe-webhook-secret`; rotation is manual every 90 days with a scheduled reminder in the ISSO calendar.
 
 **SC-28 (Protection of Information at Rest):** All data at rest is encrypted: Aurora database uses AES-256 with KMS CMK; S3 dataset bucket uses SSE-KMS with CMK; EBS volumes (Fargate ephemeral storage) use AES-256 encryption. Encryption keys are managed per SC-12.
 
@@ -226,7 +227,7 @@ The NHLBI-RDP authorization boundary encompasses:
 
 **SR-2 (Supply Chain Risk Management Plan):** NHLBI-RDP's supply chain risk management approach is integrated into the DevSecOps pipeline. All open-source dependencies are tracked via SBOM (generated by Syft at build time). Dependencies are reviewed for known vulnerabilities before any version update is merged.
 
-**SR-3 (Supply Chain Controls and Plans):** Controls include: (1) dependency pinning — all package versions pinned in `requirements.txt`; (2) automated vulnerability scanning — Trivy scans on every PR; (3) container base image provenance — images pulled only from verified registries (Docker Hub official, PyPI); (4) CI runner integrity — GitHub Actions uses pinned action versions with SHA digests where feasible.
+**SR-3 (Supply Chain Controls and Plans):** Controls include: (1) dependency pinning — all package versions pinned in `requirements.txt`; (2) automated vulnerability scanning — Trivy scans on every PR; (3) container base image provenance — images pulled only from verified registries (Docker Hub official, PyPI); (4) CI runner integrity — GitHub Actions uses pinned action versions with SHA digests where feasible. The `stripe` SDK is explicitly excluded from direct use; the system uses the `requests` library directly to maintain full control over TLS configuration and request signing, reducing supply chain exposure.
 
 **SR-11 (Component Authenticity):** Software components are verified against package registry checksums (pip hash verification). Container images are verified by digest before deployment. [PLACEHOLDER — document any additional component verification procedures].
 
