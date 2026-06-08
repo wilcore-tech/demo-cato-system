@@ -15,7 +15,7 @@ flow enforcement), SR-2/SR-3 (new third-party dependency).
 import os
 import logging
 import requests
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
