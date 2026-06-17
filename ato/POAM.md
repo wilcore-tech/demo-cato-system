@@ -15,16 +15,44 @@
 |---|---|---|---|
 | Critical | **0** | 0 | 0 |
 | High | **0** | 0 | 0 |
-| Medium | **2** | 0 | 0 |
+| Medium | **3** | 0 | 0 |
 | Low | [PLACEHOLDER] | [PLACEHOLDER] | 0 |
-| **Total Open** | **2+** | | |
+| **Total Open** | **3+** | | |
 
-The system maintains zero critical and zero high findings. Two medium findings are actively tracked below. The system is in good standing with its Authorization to Operate.
+The system maintains zero critical and zero high findings. Three medium findings are actively tracked below, including one newly identified during SAML authentication implementation (Change 4992E39C). The system is in good standing with its Authorization to Operate.
+## Open Findings
+
+### POA&M-2025-001 — Dependency Vulnerability: requests library (CVE-2023-32681)
+
+| Field | Value |
+|---|---|
+| Finding ID | POA&M-2025-001 |
+| Severity | Medium |
+| Source | Automated dependency scan (Trivy) |
+| Date Identified | [PLACEHOLDER — scan date] |
+| Control(s) Affected | SI-2 (Flaw Remediation), SR-3 (Supply Chain Controls) |
+| Vulnerability | The `requests` library version 2.28.0 has a known SSRF (Server-Side Request Forgery) vulnerability in how it handles certain redirect scenarios (CVE-2023-32681). CVSS 3.1 Base Score: 6.1 (Medium). |
+| Affected Component | `app/requirements.txt` — `requests==2.28.0` |
+| Remediation Plan | Upgrade `requests` to version 2.31.0 or later, which contains the fix. Update will require regression testing of external API integrations. |
+| Target Completion | [PLACEHOLDER — within 60 days of ATO refresh] |
+| Responsible Party | [PLACEHOLDER — Development Lead] |
 
 ---
 
-## Open Findings
+### POA&M-2025-002 — SAML Assertion Encryption Configuration
 
+| Field | Value |
+|---|---|
+| Finding ID | POA&M-2025-002 |
+| Severity | Medium |
+| Source | Security Impact Analysis (Change 4992E39C) |
+| Date Identified | [PLACEHOLDER — SIA completion date] |
+| Control(s) Affected | IA-5 (Authenticator Management), SC-12 (Cryptographic Key Establishment) |
+| Issue | SAML assertion encryption parameters and token expiration policies require formal documentation and configuration validation against FedRAMP baselines. |
+| Affected Component | `config/auth.yaml` — SAML IdP integration |
+| Remediation Plan | Document SAML token expiration (TTL), replay protection mechanisms, and assertion encryption cipher suites in updated SSP Section 2.13. Validate IdP certificate chain and establish key rotation schedule per SC-12. |
+| Target Completion | [PLACEHOLDER — within 30 days of this POA&M update] |
+| Responsible Party | [PLACEHOLDER — ISSO / Security Engineering] |
 ### POA&M-2025-001 — Dependency Vulnerability: requests library (CVE-2023-32681)
 
 | Field | Value |
