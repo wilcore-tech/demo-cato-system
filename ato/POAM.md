@@ -25,6 +25,16 @@ The system maintains zero critical and zero high findings. Two medium findings a
 
 ## Open Findings
 
+A Security Impact Analysis (SIA) has been initiated for wilcore-tech/demo-cato-system#PR3 affecting the NIH Grant Portal (Transformative tier). The SIA will assess security implications of the proposed changes and determine if additional POA&M items are warranted prior to deployment authorization.
+
+Supply Chain Risk Management Plan updated per SIA requirements for NIH Grant Portal (wilcore-tech/demo-cato-system#PR3, Tier: Transformative). New dependency inventory and vendor assessment controls documented in SCRM baseline. Mitigation tracking assigned to Infrastructure team with quarterly validation gates.
+
+Authorization Boundary Diagram update required to reflect architectural changes introduced in wilcore-tech/demo-cato-system#PR3. This diagram revision is classified as Transformative tier and impacts the NIH Grant Portal system authorization scope. Update must be completed and reviewed by AO before closure of this finding.
+
+ISA documentation for the NIH Grant Portal external system connection (referenced in wilcore-tech/demo-cato-system#PR3, Tier: Transformative) is required and must be completed prior to system authorization. The ISA shall address data flows, authentication mechanisms, and boundary protection controls between NHLBI-RDP and the Grant Portal.
+
+SSP control descriptions for AC-2, AC-3, AC-4, AC-6, AU-12, and AU-2 require updates to reflect changes implemented in wilcore-tech/demo-cato-system#PR3 (Transformative tier). These updates align access control and audit logging mechanisms with current NIH Grant Portal operational requirements and are scheduled for completion in the current review cycle.
+
 ### POA&M-2025-001 — Dependency Vulnerability: requests library (CVE-2023-32681)
 
 | Field | Value |
@@ -88,6 +98,8 @@ The system maintains zero critical and zero high findings. Two medium findings a
 ---
 
 ## AO Acknowledgment
+
+A Significant Change Notification (SCN) has been generated and submitted to the Authorizing Official for wilcore-tech/demo-cato-system#PR3, classified as a Transformative-tier change affecting the NIH Grant Portal system architecture. The SCN documents the proposed modifications and requests formal approval prior to implementation. AO response is pending and will be recorded upon receipt.
 
 The Authorizing Official has reviewed the current POA&M and accepts the residual risk represented by the open findings, contingent on remediation by the scheduled dates.
 
