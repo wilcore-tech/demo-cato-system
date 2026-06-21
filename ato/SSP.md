@@ -67,6 +67,8 @@ Security categorization performed per FIPS Publication 199 and NIST SP 800-60 Vo
 
 ## 4. Authorization Boundary
 
+The authorization boundary has been updated to reflect architectural changes implemented via wilcore-tech/demo-cato-system#PR3. This update encompasses modifications to system interfaces, data flow paths, and external integration points to maintain current system topology documentation. The revised boundary diagram is maintained in the system architecture repository and updated with each significant infrastructure change.
+
 The NHLBI-RDP authorization boundary encompasses:
 
 - **Application Layer:** FastAPI application containers running on AWS ECS Fargate in a dedicated VPC (CIDR: 10.10.0.0/16). Containers are isolated in private subnets with no direct internet ingress.
@@ -83,6 +85,8 @@ The NHLBI-RDP authorization boundary encompasses:
 ---
 
 ## 5. External Integrations
+
+A Significant Change Notification (SCN) has been submitted to the Authorizing Official for a transformative-tier modification involving the NIH Grant Portal integration (wilcore-tech/demo-cato-system#PR3). This change impacts the system's external data exchange capabilities and requires formal AO approval prior to implementation. The SCN documents all modifications to the authorization boundary and affected security controls.
 
 | System | Owner | Connection Type | Data Exchanged | Agreement | Direction |
 |---|---|---|---|---|---|
@@ -109,6 +113,8 @@ The NHLBI-RDP authorization boundary encompasses:
 ---
 
 ## 7. Security Control Narratives
+
+A Security Impact Analysis (SIA) has been conducted for the NIH Grant Portal in response to change request wilcore-tech/demo-cato-system#PR3, classified as Transformative tier. The SIA documents the security implications of the proposed changes and identifies any modifications required to existing control implementations to maintain authorized system operation. Results and required control updates are detailed in the corresponding SIA documentation.
 
 *Controls are organized by NIST SP 800-53 Rev 5 control families. Each narrative describes how the control is implemented for NHLBI-RDP. Controls marked `[CURRENT — last updated: PLACEHOLDER DATE]` require date updates during each annual review.*
 
