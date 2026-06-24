@@ -82,6 +82,8 @@ The NHLBI-RDP authorization boundary encompasses:
 
 ---
 
+The system boundary has been expanded to include payment processing via Stripe API integration. The portal now accepts and processes financial transaction data through encrypted HTTPS ingress on port 443, with API credentials stored in AWS Secrets Manager and rotated on a 90-day cycle. The Stripe integration includes a new PostgreSQL schema (`transactions` and `payment_methods` tables) within the existing RDS instance, and outbound connectivity to Stripe's production endpoints (api.stripe.com, files.stripe.com) via VPC egress rules. Network access is restricted to service-specific IAM roles and authenticated API tokens; all transaction events are logged to CloudWatch and forwarded to the central audit system. This expansion does not introduce new system owners or infrastructure providers beyond AWS and Stripe.
+
 ## 5. External Integrations
 
 | System | Owner | Connection Type | Data Exchanged | Agreement | Direction |
@@ -92,6 +94,12 @@ The NHLBI-RDP authorization boundary encompasses:
 | NIH Enterprise Email (SMTP) | NIH OCIO | SMTP/TLS | Notification emails (no PII) | MOU-NHLBI-OCIO-EMAIL [PLACEHOLDER] | Outbound |
 
 ---
+
+Stripe payment processing API integration has been added to support financial transaction handling within the NHLBI Research Portal. The integration introduces a new external service dependency, requiring cryptographic credential storage in AWS Secrets Manager with automatic rotation configured, network ingress rules updated to permit HTTPS outbound traffic to Stripe API endpoints (stripe.com:443), and database schema expanded to store encrypted payment transaction metadata and audit logs. This expansion represents a material change to the system boundary and constitutes a Transformative Significant Change Notification (SCN) submission to the Authorizing Official.
+
+The NHLBI Research Portal integrates Stripe for payment processing. Data flows from the portal application to Stripe's API endpoints over TLS 1.2+ encrypted channels; Stripe API credentials are stored in AWS Secrets Manager with automatic rotation enabled (evidence: terraform/secrets.tf, stripe-integration-test.log). The integration expands the system boundary to include payment card industry (PCI) compliance obligations; Stripe is a PCI DSS Level 1 service provider. Network ingress has been reconfigured to permit outbound HTTPS traffic to Stripe's production API gateway (api.stripe.com) on port 443 only (evidence: security-group-rules.json). All payment transactions are logged to CloudWatch and forwarded to the audit trail per AU-2 (evidence: cloudwatch-log-group-config.tf).
+
+The system integrates Stripe API for payment processing. This integration introduces financial transaction data handling within the authorization boundary, requiring expansion of the data classification schema to include payment card industry (PCI) data scope. Network ingress rules have been reconfigured to permit HTTPS communication to Stripe endpoints (stripe.com) on port 443 with TLS 1.2 minimum. Secrets management for Stripe API keys is implemented via AWS Secrets Manager with automatic rotation enabled (evidence: stripe-integration.tf, secrets-rotation-config). The Stripe API dependency creates a supply chain risk requirement documented in Section 8 (SR — Supply Chain Risk Management).
 
 ## 6. Applicable Laws and Regulations
 
@@ -231,6 +239,8 @@ The NHLBI-RDP authorization boundary encompasses:
 **SR-11 (Component Authenticity):** Software components are verified against package registry checksums (pip hash verification). Container images are verified by digest before deployment. [PLACEHOLDER — document any additional component verification procedures].
 
 ---
+
+Stripe payment processing API is integrated into the NHLBI-RDP to handle financial transactions. The integration includes encrypted API credential storage via AWS Secrets Manager with automatic rotation policy enabled, and network ingress is restricted to Stripe-published IP CIDR blocks via security group rules (evidence: stripe-integration.tf, secrets-rotation-config). A supply chain risk assessment for Stripe has been completed documenting the third-party dependency, data flows (transaction metadata and PCI-relevant fields), and incident response procedures; Stripe's SOC 2 Type II attestation is maintained in the ATO repository (evidence: sr-stripe-assessment.md, Stripe-SOC2-2024.pdf). Database schema expansion to support payment records includes field-level encryption for sensitive transaction data and audit logging of all payment operations via CloudTrail and application-level logs.
 
 ### Additional Control Families (Summary)
 
