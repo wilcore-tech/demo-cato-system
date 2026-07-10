@@ -70,6 +70,8 @@ The system maintains zero critical and zero high findings. Two medium findings a
 
 ---
 
+POAM-E105BDE0 | HIGH | IA-2, IA-5, IA-8, SC-12, SC-13 | SAML-based authentication implementation replacing existing authentication mechanism. System boundary authentication and user identification/management controls require SSP updates, ISA documentation for external IdP connections, and formal IdP security assessment against NIST 800-53 IA and SC families. Discovered: 2026-07-10. Owner: Security Engineering Team. Target: 2026-08-09. Status: PENDING — Security Impact Analysis completed, awaiting Significant Change Request review and AO determination before production deployment (evidence: change-E105BDE0, SIA-E105BDE0, config/auth.yaml).
+
 ## Closed Findings (Current Period)
 
 *No findings closed this quarter. [PLACEHOLDER — update as findings are remediated.]*
