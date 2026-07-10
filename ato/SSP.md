@@ -178,6 +178,10 @@ The NHLBI-RDP authorization boundary encompasses:
 
 ---
 
+The NHLBI Research Portal implements SAML-based authentication to manage identity assertion for both organizational and non-organizational users. Authentication requests are processed through a SAML identity provider configured in config/auth.yaml, which validates credentials and issues assertions for session establishment. User identity attributes from the SAML assertion are mapped to local account attributes, enabling role-based access control decisions downstream in the AC family controls. The SAML implementation replaces direct credential storage and has been evaluated in Security Impact Analysis E105BDE0 to confirm no gaps in identification, authentication strength, or session management requirements relative to FIPS 199 Moderate baseline controls.
+
+The system implements SAML-based authentication for both organizational and non-organizational user identification and authentication, replacing the prior mechanism via configuration in config/auth.yaml. IdP selection and control validation against NIST 800-53 IA and SC families are documented in change E105BDE0 security assessment records. IdP security assessment and control implementation validation against IA-2, IA-5, SC-7, and SC-12 are tracked as a current obligation (evidence: change-E105BDE0-assessment, IdP-control-validation-log). Active IdP deployment and continuous control monitoring are enforced through system configuration management and periodic access control reviews.
+
 ### SC — System and Communications Protection
 
 `[CURRENT — last updated: PLACEHOLDER DATE]`
